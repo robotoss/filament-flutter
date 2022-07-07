@@ -1,25 +1,39 @@
 package com.robotoss.filament_flutter_android
 
 import androidx.annotation.NonNull
-
+import androidx.lifecycle.Lifecycle
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-/** FilamentFlutterAndroidPlugin */
-class FilamentFlutterAndroidPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
-
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "filament_flutter_android")
-    channel.setMethodCallHandler(this)
+class FilamentFlutterAndroidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+  companion object {
+    const val VIEW_TYPE = "flutter_filament_plugin.view"
   }
+
+  private lateinit var channel: MethodChannel
+  private var lifecycle: Lifecycle? = null
+  private lateinit var pluginBinding: FlutterPlugin.FlutterPluginBinding
+
+  // FlutterPlugin
+
+  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    channel = MethodChannel(binding.binaryMessenger, "filament")
+    channel.setMethodCallHandler(this)
+
+    pluginBinding = binding
+  }
+
+  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    channel.setMethodCallHandler(null)
+  }
+
+  // MethodCallHandler
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "getPlatformVersion") {
@@ -29,7 +43,25 @@ class FilamentFlutterAndroidPlugin: FlutterPlugin, MethodCallHandler {
     }
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
+  // ActivityAware
+
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    lifecycle = (binding.lifecycle as? HiddenLifecycleReference)?.lifecycle
+
+    pluginBinding.platformViewRegistry
+            .registerViewFactory(VIEW_TYPE, FilamentFactory(binding.activity, pluginBinding.binaryMessenger))
   }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    onAttachedToActivity(binding)
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    onDetachedFromActivity()
+  }
+
+  override fun onDetachedFromActivity() {
+    lifecycle = null
+  }
+
 }
