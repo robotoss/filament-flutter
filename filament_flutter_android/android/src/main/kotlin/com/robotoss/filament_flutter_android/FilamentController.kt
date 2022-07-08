@@ -4,19 +4,16 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.opengl.Matrix
 import android.os.Build
 import android.view.Surface
 import android.view.SurfaceView
-import android.view.TextureView
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.google.android.filament.android.DisplayHelper
 import com.google.android.filament.android.UiHelper
 import com.robotoss.filament_flutter_android.helper.AssetHelper
-import com.robotoss.filament_flutter_android.model.Mesh
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -29,9 +26,7 @@ import kotlin.math.sin
 
 import android.view.Choreographer
 import android.view.animation.LinearInterpolator
-import android.widget.TextView
 import com.google.android.filament.*
-import java.nio.channels.Channels
 
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -93,18 +88,7 @@ class FilamentController(
 
     private val animator = ValueAnimator.ofFloat(0.0f, 360.0f)
 
-
-    //    private lateinit var engine: Engine
-//    private lateinit var renderer: Renderer
-//    private lateinit var scene: Scene
-//    private lateinit var view: com.google.android.filament.View
-//    private lateinit var camera: Camera
-//
-//    private val uiHelper = UiHelper(UiHelper.ContextErrorPolicy.DONT_CHECK)
-//    private lateinit var displayHelper: DisplayHelper
     private var _swapChain: SwapChain? = null
-//
-//    private lateinit var _triangle: Mesh
 
     init {
         Filament.init()
@@ -129,7 +113,6 @@ class FilamentController(
 
 
     }
-
 
 
     private fun setupSurfaceView() {
@@ -294,8 +277,6 @@ class FilamentController(
 //        textView.setBackgroundColor(Color.rgb(255, 255, 255))
 //        textView.text = "Rendered on a native Android view (id: 2)"
 //        return  textView
-
-
 
 
         return surfaceView
