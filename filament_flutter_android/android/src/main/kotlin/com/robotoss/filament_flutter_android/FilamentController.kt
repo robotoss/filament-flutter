@@ -45,37 +45,37 @@ class FilamentController(
     private val _methodChannel: MethodChannel
 
     //    private val _textureView: SurfaceView
-    private var _disposed = false
+    private var disposed = false
 
     // Filament base items:
     // The View we want to render into
-    private lateinit var _surfaceView: SurfaceView
+    private lateinit var surfaceView: SurfaceView
 
     // UiHelper is provided by Filament to manage SurfaceView and SurfaceTexture
-    private lateinit var _uiHelper: UiHelper
+    private lateinit var uiHelper: UiHelper
 
     // DisplayHelper is provided by Filament to manage the display
-    private lateinit var _displayHelper: DisplayHelper
+    private lateinit var displayHelper: DisplayHelper
 
     // Choreographer is used to schedule new frames
-    private lateinit var _choreographer: Choreographer
+    private lateinit var choreographer: Choreographer
 
     // Engine creates and destroys Filament resources
     // Each engine must be accessed from a single thread of your choosing
     // Resources cannot be shared across engines
-    private lateinit var _engine: Engine
+    private lateinit var engine: Engine
 
     // A renderer instance is tied to a single surface (SurfaceView, TextureView, etc.)
-    private lateinit var _renderer: Renderer
+    private lateinit var renderer: Renderer
 
-    // A _scene holds all the renderable, lights, etc. to be drawn
-    private lateinit var _scene: Scene
+    // A scene holds all the renderable, lights, etc. to be drawn
+    private lateinit var scene: Scene
 
-    // A view defines a viewport, a _scene and a camera for rendering
-    private lateinit var _view: com.google.android.filament.View
+    // A view defines a viewport, a scene and a camera for rendering
+    private lateinit var view: com.google.android.filament.View
 
     // Should be pretty obvious :)
-    private lateinit var _camera: Camera
+    private lateinit var camera: Camera
 
     private lateinit var material: Material
     private lateinit var vertexBuffer: VertexBuffer
@@ -94,14 +94,14 @@ class FilamentController(
     private val animator = ValueAnimator.ofFloat(0.0f, 360.0f)
 
 
-    //    private lateinit var _engine: Engine
-//    private lateinit var _renderer: Renderer
-//    private lateinit var _scene: Scene
-//    private lateinit var _view: com.google.android.filament.View
-//    private lateinit var _camera: Camera
+    //    private lateinit var engine: Engine
+//    private lateinit var renderer: Renderer
+//    private lateinit var scene: Scene
+//    private lateinit var view: com.google.android.filament.View
+//    private lateinit var camera: Camera
 //
-//    private val _uiHelper = UiHelper(UiHelper.ContextErrorPolicy.DONT_CHECK)
-//    private lateinit var _displayHelper: DisplayHelper
+//    private val uiHelper = UiHelper(UiHelper.ContextErrorPolicy.DONT_CHECK)
+//    private lateinit var displayHelper: DisplayHelper
     private var _swapChain: SwapChain? = null
 //
 //    private lateinit var _triangle: Mesh
@@ -114,11 +114,11 @@ class FilamentController(
             it.setMethodCallHandler(this)
         }
 
-        _surfaceView = SurfaceView(context)
+        surfaceView = SurfaceView(context)
 
-        _choreographer = Choreographer.getInstance()
+        choreographer = Choreographer.getInstance()
 
-        _displayHelper = DisplayHelper(context)
+        displayHelper = DisplayHelper(context)
 
 
 
@@ -133,33 +133,33 @@ class FilamentController(
 
 
     private fun setupSurfaceView() {
-        _uiHelper = UiHelper(UiHelper.ContextErrorPolicy.DONT_CHECK)
-        _uiHelper.renderCallback = SurfaceCallback()
+        uiHelper = UiHelper(UiHelper.ContextErrorPolicy.DONT_CHECK)
+        uiHelper.renderCallback = SurfaceCallback()
 
         // NOTE: To choose a specific rendering resolution, add the following line:
-        // _uiHelper.setDesiredSize(1280, 720)
-        _uiHelper.attachTo(_surfaceView)
+        // uiHelper.setDesiredSize(1280, 720)
+        uiHelper.attachTo(surfaceView)
     }
 
     private fun setupFilament() {
-        _engine = Engine.create()
-        _renderer = _engine.createRenderer()
-        _scene = _engine.createScene()
-        _view = _engine.createView()
-        _camera = _engine.createCamera(_engine.entityManager.create())
+        engine = Engine.create()
+        renderer = engine.createRenderer()
+        scene = engine.createScene()
+        view = engine.createView()
+        camera = engine.createCamera(engine.entityManager.create())
     }
 
     private fun setupView() {
-        _scene.skybox = Skybox.Builder().color(0.035f, 0.035f, 0.035f, 1.0f).build(_engine)
+        scene.skybox = Skybox.Builder().color(0.035f, 0.035f, 0.035f, 1.0f).build(engine)
 
         // NOTE: Try to disable post-processing (tone-mapping, etc.) to see the difference
         // view.isPostProcessingEnabled = false
 
         // Tell the view which camera we want to use
-        _view.camera = _camera
+        view.camera = camera
 
-        // Tell the view which _scene we want to render
-        _view.scene = _scene
+        // Tell the view which scene we want to render
+        view.scene = scene
     }
 
     private fun setupScene() {
@@ -167,7 +167,7 @@ class FilamentController(
 
         material = Material.Builder()
                 .payload(materialBuffer, materialBuffer.remaining())
-                .build(_engine)
+                .build(engine)
 
 
         createMesh()
@@ -184,10 +184,10 @@ class FilamentController(
                 .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vertexBuffer, indexBuffer, 0, 3)
                 // Sets the material of the first primitive
                 .material(0, material.defaultInstance)
-                .build(_engine, renderable)
+                .build(engine, renderable)
 
-        // Add the entity to the _scene to render it
-        _scene.addEntity(renderable)
+        // Add the entity to the scene to render it
+        scene.addEntity(renderable)
 
         startAnimation()
     }
@@ -238,11 +238,11 @@ class FilamentController(
                 // We store colors as unsigned bytes but since we want values between 0 and 1
                 // in the material (shaders), we must mark the attribute as normalized
                 .normalized(VertexBuffer.VertexAttribute.COLOR)
-                .build(_engine)
+                .build(engine)
 
         // Feed the vertex data to the mesh
         // We only set 1 buffer because the data is interleaved
-        vertexBuffer.setBufferAt(_engine, 0, vertexData)
+        vertexBuffer.setBufferAt(engine, 0, vertexData)
 
         // Create the indices
         val indexData = ByteBuffer.allocate(vertexCount * shortSize)
@@ -255,8 +255,8 @@ class FilamentController(
         indexBuffer = IndexBuffer.Builder()
                 .indexCount(3)
                 .bufferType(IndexBuffer.Builder.IndexType.USHORT)
-                .build(_engine)
-        indexBuffer.setBuffer(_engine, indexData)
+                .build(engine)
+        indexBuffer.setBuffer(engine, indexData)
     }
 
     private fun startAnimation() {
@@ -269,7 +269,7 @@ class FilamentController(
             val transformMatrix = FloatArray(16)
             override fun onAnimationUpdate(a: ValueAnimator) {
                 Matrix.setRotateM(transformMatrix, 0, -(a.animatedValue as Float), 0.0f, 0.0f, 1.0f)
-                val tcm = _engine.transformManager
+                val tcm = engine.transformManager
                 tcm.setTransform(tcm.getInstance(renderable), transformMatrix)
             }
         })
@@ -298,41 +298,41 @@ class FilamentController(
 
 
 
-        return _surfaceView
+        return surfaceView
     }
 
     override fun dispose() {
-        if (_disposed) return
+        if (disposed) return
 
         _methodChannel.setMethodCallHandler(null)
         // Stop the animation and any pending frame
-        _choreographer.removeFrameCallback(frameScheduler)
+        choreographer.removeFrameCallback(frameScheduler)
         animator.cancel();
 
         // Always detach the surface before destroying the engine
-        _uiHelper.detach()
+        uiHelper.detach()
 
         // Cleanup all resources
-        _engine.destroyEntity(renderable)
-        _engine.destroyRenderer(_renderer)
-        _engine.destroyVertexBuffer(vertexBuffer)
-        _engine.destroyIndexBuffer(indexBuffer)
-        _engine.destroyMaterial(material)
-        _engine.destroyView(_view)
-//        _engine.destroyScene_(scene)
-        _engine.destroyCameraComponent(_camera.entity)
+        engine.destroyEntity(renderable)
+        engine.destroyRenderer(renderer)
+        engine.destroyVertexBuffer(vertexBuffer)
+        engine.destroyIndexBuffer(indexBuffer)
+        engine.destroyMaterial(material)
+        engine.destroyView(view)
+//        engine.destroyScene_(scene)
+        engine.destroyCameraComponent(camera.entity)
 
         // Engine.destroyEntity() destroys Filament related resources only
         // (components), not the entity itself
         val entityManager = EntityManager.get()
         entityManager.destroy(renderable)
-        entityManager.destroy(_camera.entity)
+        entityManager.destroy(camera.entity)
 
         // Destroying the engine will free up any resource you may have forgotten
         // to destroy, but it's recommended to do the cleanup properly
-        _engine.destroy()
+        engine.destroy()
 
-        _disposed = true
+        disposed = true
     }
 
     // MethodCallHandler
@@ -346,15 +346,15 @@ class FilamentController(
     inner class FrameCallback : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
             // Schedule the next frame
-            _choreographer.postFrameCallback(frameScheduler)
+            choreographer.postFrameCallback(frameScheduler)
 
             // This check guarantees that we have a swap chain
-            if (_uiHelper.isReadyToRender) {
+            if (uiHelper.isReadyToRender) {
                 // If beginFrame() returns false you should skip the frame
                 // This means you are sending frames too quickly to the GPU
-                if (_renderer.beginFrame(swapChain!!, frameTimeNanos)) {
-                    _renderer.render(_view)
-                    _renderer.endFrame()
+                if (renderer.beginFrame(swapChain!!, frameTimeNanos)) {
+                    renderer.render(view)
+                    renderer.endFrame()
                 }
             }
         }
@@ -365,19 +365,19 @@ class FilamentController(
     inner class SurfaceCallback : UiHelper.RendererCallback {
         @SuppressLint("NewApi")
         override fun onNativeWindowChanged(surface: Surface) {
-            _swapChain?.let { _engine.destroySwapChain(it) }
-            _swapChain = _engine.createSwapChain(surface, _uiHelper.swapChainFlags)
-            _displayHelper.attach(_renderer, _surfaceView.display);
+            _swapChain?.let { engine.destroySwapChain(it) }
+            _swapChain = engine.createSwapChain(surface, uiHelper.swapChainFlags)
+            displayHelper.attach(renderer, surfaceView.display);
         }
 
         override fun onDetachedFromSurface() {
-            _displayHelper.detach();
+            displayHelper.detach();
             _swapChain?.let {
-                _engine.destroySwapChain(it)
+                engine.destroySwapChain(it)
                 // Required to ensure we don't return before Filament is done executing the
                 // destroySwapChain command, otherwise Android might destroy the Surface
                 // too early
-                _engine.flushAndWait()
+                engine.flushAndWait()
                 _swapChain = null
             }
         }
@@ -385,10 +385,10 @@ class FilamentController(
         override fun onResized(width: Int, height: Int) {
             val zoom = 1.5
             val aspect = width.toDouble() / height.toDouble()
-            _camera.setProjection(Camera.Projection.ORTHO,
+            camera.setProjection(Camera.Projection.ORTHO,
                     -aspect * zoom, aspect * zoom, -zoom, zoom, 0.0, 10.0)
 
-            _view.viewport = Viewport(0, 0, width, height)
+            view.viewport = Viewport(0, 0, width, height)
         }
     }
 }
