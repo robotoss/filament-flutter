@@ -1,17 +1,19 @@
 package com.robotoss.filament_flutter_android
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.opengl.Matrix
-import android.os.Build
+import android.os.Bundle
+import android.view.Choreographer
 import android.view.Surface
 import android.view.SurfaceView
-import android.view.View
-import androidx.annotation.RequiresApi
+import android.view.animation.LinearInterpolator
 import androidx.lifecycle.DefaultLifecycleObserver
+import com.google.android.filament.*
+import com.google.android.filament.RenderableManager.PrimitiveType
+import com.google.android.filament.VertexBuffer.AttributeType
+import com.google.android.filament.VertexBuffer.VertexAttribute
 import com.google.android.filament.android.DisplayHelper
 import com.google.android.filament.android.UiHelper
 import com.robotoss.filament_flutter_android.helper.AssetHelper
@@ -21,17 +23,12 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.nio.channels.Channels
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-import android.view.Choreographer
-import android.view.animation.LinearInterpolator
-import android.widget.TextView
-import com.google.android.filament.*
 
-
-@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
 class FilamentController(
         private val viewId: Int,
         private val context: Context,
@@ -44,16 +41,12 @@ class FilamentController(
     //    private val _textureView: SurfaceView
     private var disposed = false
 
-    // Filament base items:
     // The View we want to render into
     private lateinit var surfaceView: SurfaceView
-
     // UiHelper is provided by Filament to manage SurfaceView and SurfaceTexture
     private lateinit var uiHelper: UiHelper
-
     // DisplayHelper is provided by Filament to manage the display
     private lateinit var displayHelper: DisplayHelper
-
     // Choreographer is used to schedule new frames
     private lateinit var choreographer: Choreographer
 
@@ -61,16 +54,12 @@ class FilamentController(
     // Each engine must be accessed from a single thread of your choosing
     // Resources cannot be shared across engines
     private lateinit var engine: Engine
-
     // A renderer instance is tied to a single surface (SurfaceView, TextureView, etc.)
     private lateinit var renderer: Renderer
-
     // A scene holds all the renderable, lights, etc. to be drawn
     private lateinit var scene: Scene
-
     // A view defines a viewport, a scene and a camera for rendering
     private lateinit var view: com.google.android.filament.View
-
     // Should be pretty obvious :)
     private lateinit var camera: Camera
 
@@ -79,8 +68,7 @@ class FilamentController(
     private lateinit var indexBuffer: IndexBuffer
 
     // Filament entity representing a renderable object
-    @Entity
-    private var renderable = 0
+    @Entity private var renderable = 0
 
     // A swap chain is Filament's representation of a surface
     private var swapChain: SwapChain? = null
@@ -90,8 +78,6 @@ class FilamentController(
 
     private val animator = ValueAnimator.ofFloat(0.0f, 360.0f)
 
-    private var _swapChain: SwapChain? = null
-
     init {
         Filament.init()
 
@@ -100,11 +86,19 @@ class FilamentController(
             it.setMethodCallHandler(this)
         }
 
-        surfaceView = SurfaceView(context)
+        SurfaceView(context).also {
+            surfaceView = it
+        }
+
+//        surfaceView = SurfaceView(context)
 
         choreographer = Choreographer.getInstance()
 
-        displayHelper = DisplayHelper(context)
+        DisplayHelper(context).also {
+            displayHelper = it
+        }
+
+//        displayHelper = DisplayHelper(context)
 
 
 
@@ -119,11 +113,13 @@ class FilamentController(
 
     private fun setupSurfaceView() {
         uiHelper = UiHelper(UiHelper.ContextErrorPolicy.DONT_CHECK)
-        uiHelper.renderCallback = SurfaceCallback()
+
 
         // NOTE: To choose a specific rendering resolution, add the following line:
         // uiHelper.setDesiredSize(1280, 720)
         uiHelper.attachTo(surfaceView)
+
+        uiHelper.renderCallback = SurfaceCallback()
     }
 
     private fun setupFilament() {
@@ -138,7 +134,7 @@ class FilamentController(
         scene.skybox = Skybox.Builder().color(0.035f, 0.035f, 0.035f, 1.0f).build(engine)
 
         // NOTE: Try to disable post-processing (tone-mapping, etc.) to see the difference
-        // view.isPostProcessingEnabled = false
+         view.isPostProcessingEnabled = false
 
         // Tell the view which camera we want to use
         view.camera = camera
@@ -264,56 +260,56 @@ class FilamentController(
 
     // PlatformView
 
-    override fun onFlutterViewAttached(flutterView: View) {
-        setupSurfaceView()
-        setupFilament()
-        setupView()
-        setupScene()
-
-    }
-
-
-    override fun getView(): View {
-        var textView = TextView(context)
-        textView.textSize = 72f
-        textView.setBackgroundColor(Color.rgb(255, 255, 255))
-        textView.text = "Rendered on a native Android view (id: 2)"
-        return  textView
+//    override fun onFlutterViewAttached(flutterView: View) {
+//        setupSurfaceView()
+//        setupFilament()
+//        setupView()
+//        setupScene()
+//
+//    }
 
 
-//        return surfaceView
+    override fun getView():  android.view.View {
+//        var textView = TextView(context)
+//        textView.textSize = 72f
+//        textView.setBackgroundColor(Color.rgb(255, 255, 255))
+//        textView.text = "Rendered on a native Android view (id: 2)"
+//        return  textView
+
+        choreographer.postFrameCallback(frameScheduler)
+        return surfaceView
     }
 
     override fun dispose() {
         if (disposed) return
 
         _methodChannel.setMethodCallHandler(null)
-        // Stop the animation and any pending frame
-        choreographer.removeFrameCallback(frameScheduler)
-        animator.cancel();
-
-        // Always detach the surface before destroying the engine
-        uiHelper.detach()
-
-        // Cleanup all resources
-        engine.destroyEntity(renderable)
-        engine.destroyRenderer(renderer)
-        engine.destroyVertexBuffer(vertexBuffer)
-        engine.destroyIndexBuffer(indexBuffer)
-        engine.destroyMaterial(material)
-        engine.destroyView(view)
-        engine.destroyScene(scene)
-        engine.destroyCameraComponent(camera.entity)
-
-        // Engine.destroyEntity() destroys Filament related resources only
-        // (components), not the entity itself
-        val entityManager = EntityManager.get()
-        entityManager.destroy(renderable)
-        entityManager.destroy(camera.entity)
-
-        // Destroying the engine will free up any resource you may have forgotten
-        // to destroy, but it's recommended to do the cleanup properly
-        engine.destroy()
+//        // Stop the animation and any pending frame
+//        choreographer.removeFrameCallback(frameScheduler)
+//        animator.cancel();
+//
+//        // Always detach the surface before destroying the engine
+//        uiHelper.detach()
+//
+//        // Cleanup all resources
+//        engine.destroyEntity(renderable)
+//        engine.destroyRenderer(renderer)
+//        engine.destroyVertexBuffer(vertexBuffer)
+//        engine.destroyIndexBuffer(indexBuffer)
+//        engine.destroyMaterial(material)
+//        engine.destroyView(view)
+//        engine.destroyScene(scene)
+//        engine.destroyCameraComponent(camera.entity)
+//
+//        // Engine.destroyEntity() destroys Filament related resources only
+//        // (components), not the entity itself
+//        val entityManager = EntityManager.get()
+//        entityManager.destroy(renderable)
+//        entityManager.destroy(camera.entity)
+//
+//        // Destroying the engine will free up any resource you may have forgotten
+//        // to destroy, but it's recommended to do the cleanup properly
+//        engine.destroy()
 
         disposed = true
     }
@@ -326,10 +322,13 @@ class FilamentController(
         }
     }
 
+
+
     inner class FrameCallback : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
+            println("Some Print")
             // Schedule the next frame
-            choreographer.postFrameCallback(frameScheduler)
+            choreographer.postFrameCallback(this)
 
             // This check guarantees that we have a swap chain
             if (uiHelper.isReadyToRender) {
@@ -346,22 +345,21 @@ class FilamentController(
     // DefaultLifecycleObserver
 
     inner class SurfaceCallback : UiHelper.RendererCallback {
-        @SuppressLint("NewApi")
         override fun onNativeWindowChanged(surface: Surface) {
-            _swapChain?.let { engine.destroySwapChain(it) }
-            _swapChain = engine.createSwapChain(surface, uiHelper.swapChainFlags)
+            swapChain?.let { engine.destroySwapChain(it) }
+            swapChain = engine.createSwapChain(surface, uiHelper.swapChainFlags)
             displayHelper.attach(renderer, surfaceView.display);
         }
 
         override fun onDetachedFromSurface() {
             displayHelper.detach();
-            _swapChain?.let {
+            swapChain?.let {
                 engine.destroySwapChain(it)
                 // Required to ensure we don't return before Filament is done executing the
                 // destroySwapChain command, otherwise Android might destroy the Surface
                 // too early
                 engine.flushAndWait()
-                _swapChain = null
+                swapChain = null
             }
         }
 
