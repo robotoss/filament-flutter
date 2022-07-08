@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.opengl.Matrix
 import android.os.Build
 import android.view.Surface
@@ -26,6 +27,7 @@ import kotlin.math.sin
 
 import android.view.Choreographer
 import android.view.animation.LinearInterpolator
+import android.widget.TextView
 import com.google.android.filament.*
 
 
@@ -272,14 +274,14 @@ class FilamentController(
 
 
     override fun getView(): View {
-//        var textView = TextView(context)
-//        textView.textSize = 72f
-//        textView.setBackgroundColor(Color.rgb(255, 255, 255))
-//        textView.text = "Rendered on a native Android view (id: 2)"
-//        return  textView
+        var textView = TextView(context)
+        textView.textSize = 72f
+        textView.setBackgroundColor(Color.rgb(255, 255, 255))
+        textView.text = "Rendered on a native Android view (id: 2)"
+        return  textView
 
 
-        return surfaceView
+//        return surfaceView
     }
 
     override fun dispose() {
@@ -300,7 +302,7 @@ class FilamentController(
         engine.destroyIndexBuffer(indexBuffer)
         engine.destroyMaterial(material)
         engine.destroyView(view)
-//        engine.destroyScene_(scene)
+        engine.destroyScene(scene)
         engine.destroyCameraComponent(camera.entity)
 
         // Engine.destroyEntity() destroys Filament related resources only
