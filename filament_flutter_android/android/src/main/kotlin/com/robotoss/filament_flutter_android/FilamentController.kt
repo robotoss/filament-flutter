@@ -4,16 +4,12 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.opengl.Matrix
-import android.os.Bundle
 import android.view.Choreographer
 import android.view.Surface
-import android.view.SurfaceView
+import android.view.TextureView
 import android.view.animation.LinearInterpolator
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.google.android.filament.*
-import com.google.android.filament.RenderableManager.PrimitiveType
-import com.google.android.filament.VertexBuffer.AttributeType
-import com.google.android.filament.VertexBuffer.VertexAttribute
 import com.google.android.filament.android.DisplayHelper
 import com.google.android.filament.android.UiHelper
 import com.robotoss.filament_flutter_android.helper.AssetHelper
@@ -23,17 +19,16 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.channels.Channels
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 
 class FilamentController(
-        private val viewId: Int,
-        private val context: Context,
-        private val activity: Activity,
-        private val binaryMessenger: BinaryMessenger,
+    private val viewId: Int,
+    private val context: Context,
+    private val activity: Activity,
+    private val binaryMessenger: BinaryMessenger,
 ) : DefaultLifecycleObserver, MethodChannel.MethodCallHandler, PlatformView {
 
     private val _methodChannel: MethodChannel
@@ -42,24 +37,31 @@ class FilamentController(
     private var disposed = false
 
     // The View we want to render into
-    private lateinit var surfaceView: SurfaceView
+    private var textureView: TextureView
+
     // UiHelper is provided by Filament to manage SurfaceView and SurfaceTexture
     private lateinit var uiHelper: UiHelper
+
     // DisplayHelper is provided by Filament to manage the display
-    private lateinit var displayHelper: DisplayHelper
+    private var displayHelper: DisplayHelper
+
     // Choreographer is used to schedule new frames
-    private lateinit var choreographer: Choreographer
+    private var choreographer: Choreographer
 
     // Engine creates and destroys Filament resources
     // Each engine must be accessed from a single thread of your choosing
     // Resources cannot be shared across engines
     private lateinit var engine: Engine
+
     // A renderer instance is tied to a single surface (SurfaceView, TextureView, etc.)
     private lateinit var renderer: Renderer
+
     // A scene holds all the renderable, lights, etc. to be drawn
     private lateinit var scene: Scene
+
     // A view defines a viewport, a scene and a camera for rendering
     private lateinit var view: com.google.android.filament.View
+
     // Should be pretty obvious :)
     private lateinit var camera: Camera
 
@@ -68,7 +70,8 @@ class FilamentController(
     private lateinit var indexBuffer: IndexBuffer
 
     // Filament entity representing a renderable object
-    @Entity private var renderable = 0
+    @Entity
+    private var renderable = 0
 
     // A swap chain is Filament's representation of a surface
     private var swapChain: SwapChain? = null
@@ -86,19 +89,12 @@ class FilamentController(
             it.setMethodCallHandler(this)
         }
 
-        SurfaceView(context).also {
-            surfaceView = it
-        }
-
-//        surfaceView = SurfaceView(context)
+        textureView = TextureView(context)
 
         choreographer = Choreographer.getInstance()
 
-        DisplayHelper(context).also {
-            displayHelper = it
-        }
 
-//        displayHelper = DisplayHelper(context)
+        displayHelper = DisplayHelper(context)
 
 
 
@@ -106,8 +102,6 @@ class FilamentController(
         setupFilament()
         setupView()
         setupScene()
-
-
     }
 
 
@@ -117,7 +111,7 @@ class FilamentController(
 
         // NOTE: To choose a specific rendering resolution, add the following line:
         // uiHelper.setDesiredSize(1280, 720)
-        uiHelper.attachTo(surfaceView)
+        uiHelper.attachTo(textureView)
 
         uiHelper.renderCallback = SurfaceCallback()
     }
@@ -134,7 +128,7 @@ class FilamentController(
         scene.skybox = Skybox.Builder().color(0.035f, 0.035f, 0.035f, 1.0f).build(engine)
 
         // NOTE: Try to disable post-processing (tone-mapping, etc.) to see the difference
-         view.isPostProcessingEnabled = false
+        view.isPostProcessingEnabled = false
 
         // Tell the view which camera we want to use
         view.camera = camera
@@ -147,8 +141,8 @@ class FilamentController(
         val materialBuffer = AssetHelper.readMaterial(context, "baked_color.filamat")
 
         material = Material.Builder()
-                .payload(materialBuffer, materialBuffer.remaining())
-                .build(engine)
+            .payload(materialBuffer, materialBuffer.remaining())
+            .build(engine)
 
 
         createMesh()
@@ -159,13 +153,13 @@ class FilamentController(
         // We then create a renderable component on that entity
         // A renderable is made of several primitives; in this case we declare only 1
         RenderableManager.Builder(1)
-                // Overall bounding box of the renderable
-                .boundingBox(Box(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.01f))
-                // Sets the mesh data of the first primitive
-                .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vertexBuffer, indexBuffer, 0, 3)
-                // Sets the material of the first primitive
-                .material(0, material.defaultInstance)
-                .build(engine, renderable)
+            // Overall bounding box of the renderable
+            .boundingBox(Box(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.01f))
+            // Sets the mesh data of the first primitive
+            .geometry(0, RenderableManager.PrimitiveType.TRIANGLES, vertexBuffer, indexBuffer, 0, 3)
+            // Sets the material of the first primitive
+            .material(0, material.defaultInstance)
+            .build(engine, renderable)
 
         // Add the entity to the scene to render it
         scene.addEntity(renderable)
@@ -199,27 +193,39 @@ class FilamentController(
         val a2 = PI * 4.0 / 3.0
 
         val vertexData = ByteBuffer.allocate(vertexCount * vertexSize)
-                // It is important to respect the native byte order
-                .order(ByteOrder.nativeOrder())
-                .put(Vertex(1.0f, 0.0f, 0.0f, 0xffff0000.toInt()))
-                .put(Vertex(cos(a1).toFloat(), sin(a1).toFloat(), 0.0f, 0xff00ff00.toInt()))
-                .put(Vertex(cos(a2).toFloat(), sin(a2).toFloat(), 0.0f, 0xff0000ff.toInt()))
-                // Make sure the cursor is pointing in the right place in the byte buffer
-                .flip()
+            // It is important to respect the native byte order
+            .order(ByteOrder.nativeOrder())
+            .put(Vertex(1.0f, 0.0f, 0.0f, 0xffff0000.toInt()))
+            .put(Vertex(cos(a1).toFloat(), sin(a1).toFloat(), 0.0f, 0xff00ff00.toInt()))
+            .put(Vertex(cos(a2).toFloat(), sin(a2).toFloat(), 0.0f, 0xff0000ff.toInt()))
+            // Make sure the cursor is pointing in the right place in the byte buffer
+            .flip()
 
         // Declare the layout of our mesh
         vertexBuffer = VertexBuffer.Builder()
-                .bufferCount(1)
-                .vertexCount(vertexCount)
-                // Because we interleave position and color data we must specify offset and stride
-                // We could use de-interleaved data by declaring two buffers and giving each
-                // attribute a different buffer index
-                .attribute(VertexBuffer.VertexAttribute.POSITION, 0, VertexBuffer.AttributeType.FLOAT3, 0, vertexSize)
-                .attribute(VertexBuffer.VertexAttribute.COLOR, 0, VertexBuffer.AttributeType.UBYTE4, 3 * floatSize, vertexSize)
-                // We store colors as unsigned bytes but since we want values between 0 and 1
-                // in the material (shaders), we must mark the attribute as normalized
-                .normalized(VertexBuffer.VertexAttribute.COLOR)
-                .build(engine)
+            .bufferCount(1)
+            .vertexCount(vertexCount)
+            // Because we interleave position and color data we must specify offset and stride
+            // We could use de-interleaved data by declaring two buffers and giving each
+            // attribute a different buffer index
+            .attribute(
+                VertexBuffer.VertexAttribute.POSITION,
+                0,
+                VertexBuffer.AttributeType.FLOAT3,
+                0,
+                vertexSize
+            )
+            .attribute(
+                VertexBuffer.VertexAttribute.COLOR,
+                0,
+                VertexBuffer.AttributeType.UBYTE4,
+                3 * floatSize,
+                vertexSize
+            )
+            // We store colors as unsigned bytes but since we want values between 0 and 1
+            // in the material (shaders), we must mark the attribute as normalized
+            .normalized(VertexBuffer.VertexAttribute.COLOR)
+            .build(engine)
 
         // Feed the vertex data to the mesh
         // We only set 1 buffer because the data is interleaved
@@ -227,16 +233,16 @@ class FilamentController(
 
         // Create the indices
         val indexData = ByteBuffer.allocate(vertexCount * shortSize)
-                .order(ByteOrder.nativeOrder())
-                .putShort(0)
-                .putShort(1)
-                .putShort(2)
-                .flip()
+            .order(ByteOrder.nativeOrder())
+            .putShort(0)
+            .putShort(1)
+            .putShort(2)
+            .flip()
 
         indexBuffer = IndexBuffer.Builder()
-                .indexCount(3)
-                .bufferType(IndexBuffer.Builder.IndexType.USHORT)
-                .build(engine)
+            .indexCount(3)
+            .bufferType(IndexBuffer.Builder.IndexType.USHORT)
+            .build(engine)
         indexBuffer.setBuffer(engine, indexData)
     }
 
@@ -269,7 +275,7 @@ class FilamentController(
 //    }
 
 
-    override fun getView():  android.view.View {
+    override fun getView(): android.view.View {
 //        var textView = TextView(context)
 //        textView.textSize = 72f
 //        textView.setBackgroundColor(Color.rgb(255, 255, 255))
@@ -277,7 +283,7 @@ class FilamentController(
 //        return  textView
 
         choreographer.postFrameCallback(frameScheduler)
-        return surfaceView
+        return textureView
     }
 
     override fun dispose() {
@@ -323,7 +329,6 @@ class FilamentController(
     }
 
 
-
     inner class FrameCallback : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
             println("Some Print")
@@ -348,11 +353,11 @@ class FilamentController(
         override fun onNativeWindowChanged(surface: Surface) {
             swapChain?.let { engine.destroySwapChain(it) }
             swapChain = engine.createSwapChain(surface, uiHelper.swapChainFlags)
-            displayHelper.attach(renderer, surfaceView.display);
+            displayHelper.attach(renderer, textureView.display);
         }
 
         override fun onDetachedFromSurface() {
-            displayHelper.detach();
+            displayHelper.detach()
             swapChain?.let {
                 engine.destroySwapChain(it)
                 // Required to ensure we don't return before Filament is done executing the
@@ -366,8 +371,10 @@ class FilamentController(
         override fun onResized(width: Int, height: Int) {
             val zoom = 1.5
             val aspect = width.toDouble() / height.toDouble()
-            camera.setProjection(Camera.Projection.ORTHO,
-                    -aspect * zoom, aspect * zoom, -zoom, zoom, 0.0, 10.0)
+            camera.setProjection(
+                Camera.Projection.ORTHO,
+                -aspect * zoom, aspect * zoom, -zoom, zoom, 0.0, 10.0
+            )
 
             view.viewport = Viewport(0, 0, width, height)
         }

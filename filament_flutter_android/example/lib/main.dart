@@ -20,9 +20,12 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: FilamentView(),
+        appBar: AppBar(
+          title: Text('Filament View'),
+        ),
+        body: const FilamentView(),
       ),
     );
   }
