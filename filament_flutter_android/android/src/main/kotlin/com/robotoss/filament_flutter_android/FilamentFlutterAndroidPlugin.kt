@@ -11,57 +11,48 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-class FilamentFlutterAndroidPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-  companion object {
-    const val VIEW_TYPE = "flutter_filament_plugin.view"
-  }
-
-  private lateinit var channel: MethodChannel
-  private var lifecycle: Lifecycle? = null
-  private lateinit var pluginBinding: FlutterPlugin.FlutterPluginBinding
-
-  // FlutterPlugin
-
-  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(binding.binaryMessenger, "filament")
-    channel.setMethodCallHandler(this)
-
-    pluginBinding = binding
-  }
-
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
-
-  // MethodCallHandler
-
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+class FilamentFlutterAndroidPlugin : FlutterPlugin, ActivityAware {
+    companion object {
+        const val VIEW_TYPE = "flutter_filament_plugin.view"
     }
-  }
 
-  // ActivityAware
+    //  private lateinit var channel: MethodChannel
+    private var lifecycle: Lifecycle? = null
+    private lateinit var pluginBinding: FlutterPlugin.FlutterPluginBinding
 
-  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    lifecycle = (binding.lifecycle as? HiddenLifecycleReference)?.lifecycle
+    // FlutterPlugin
 
-    pluginBinding.platformViewRegistry
-            .registerViewFactory(VIEW_TYPE, FilamentFactory(binding.activity, pluginBinding.binaryMessenger))
-  }
+    override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
 
-  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    onAttachedToActivity(binding)
-  }
 
-  override fun onDetachedFromActivityForConfigChanges() {
-    onDetachedFromActivity()
-  }
+        pluginBinding = binding
+    }
 
-  override fun onDetachedFromActivity() {
-    lifecycle = null
-  }
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    }
+
+    // ActivityAware
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        lifecycle = (binding.lifecycle as? HiddenLifecycleReference)?.lifecycle
+
+        pluginBinding.platformViewRegistry
+            .registerViewFactory(
+                VIEW_TYPE,
+                FilamentFactory(binding.activity, pluginBinding.binaryMessenger)
+            )
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
+        onDetachedFromActivity()
+    }
+
+    override fun onDetachedFromActivity() {
+        lifecycle = null
+    }
 
 }

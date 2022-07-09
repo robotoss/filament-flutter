@@ -1,6 +1,9 @@
 import 'package:filament_flutter_android/filament_flutter_android.dart';
 import 'package:flutter/material.dart';
 
+const _droneModel = 'BusterDrone';
+const _helmetModel = 'FlightHelmet';
+
 void main() {
   runApp(MyApp());
 }
@@ -11,6 +14,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  String _activeModel = _droneModel;
+
+  late final FilamentViewController _controller;
+
+  void changeModelPressed() {
+    if (_activeModel == _droneModel) {
+      _activeModel = _helmetModel;
+    } else {
+      _activeModel = _droneModel;
+    }
+    _controller.changeModel(modelName: _activeModel);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -23,9 +39,17 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Filament View'),
+          title: const Text('Filament View'),
         ),
-        body: const FilamentView(),
+        body: FilamentView(
+          onFilamentViewViewCreated: (controller) {
+            _controller = controller;
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: changeModelPressed,
+          child: const Center(child: Icon(Icons.swap_horiz)),
+        ),
       ),
     );
   }

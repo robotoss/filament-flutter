@@ -358,8 +358,16 @@ class FilamentController(
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
-            else -> Unit
+            "change3DModel" -> onChange3DModel(
+                requireNotNull(call.argument<String>("modelName")),
+                result
+            )
+            else -> result.notImplemented()
         }
+    }
+
+    private fun onChange3DModel(modelName: String, result: MethodChannel.Result) {
+        println("New model - $modelName")
     }
 
     private fun readCompressedAsset(assetName: String): ByteBuffer {
