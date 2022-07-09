@@ -331,7 +331,6 @@ class FilamentController(
 
     inner class FrameCallback : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
-            println("Some Print")
             // Schedule the next frame
             choreographer.postFrameCallback(this)
 
