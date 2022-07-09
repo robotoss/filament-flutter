@@ -1,5 +1,7 @@
 name: filament_flutter_android
-description: A new Flutter project.
+description: Flutter widgets for Filament, at Android.
+repository: https://github.com/robotoss/filament-flutter/tree/main/filament_flutter_android
+issue_tracker: https://github.com/robotoss/filament-flutter/issues?q=is%3Aopen
 version: 0.0.1
 homepage:
 
@@ -10,6 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  plugin_platform_interface: ^2.1.2
 
 dev_dependencies:
   flutter_test:

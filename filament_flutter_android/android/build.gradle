@@ -41,10 +41,13 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
     }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.filament:filament-android:1.25.0'
+    implementation 'com.google.android.filament:gltfio-android:1.25.0'
+    implementation 'com.google.android.filament:filament-utils-android:1.25.0'
 }
