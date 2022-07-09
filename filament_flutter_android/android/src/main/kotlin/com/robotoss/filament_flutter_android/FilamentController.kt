@@ -108,7 +108,7 @@ class FilamentController(
             true
         }
 
-        createDefaultRenderables()
+        createDefaultRenderables("BusterDrone")
         createIndirectLight()
 
         setStatusText("To load a new model, go to the above URL on your host machine.")
@@ -151,14 +151,14 @@ class FilamentController(
         remoteServer = RemoteServer(8082)
     }
 
-    private fun createDefaultRenderables() {
-        val buffer = activity.assets.open("models/BusterDrone/scene.gltf").use { input ->
+    private fun createDefaultRenderables(renderModelName: String) {
+        val buffer = activity.assets.open("models/$renderModelName/scene.gltf").use { input ->
             val bytes = ByteArray(input.available())
             input.read(bytes)
             ByteBuffer.wrap(bytes)
         }
 
-        modelViewer.loadModelGltfAsync(buffer) { uri -> readCompressedAsset("models/BusterDrone/$uri") }
+        modelViewer.loadModelGltfAsync(buffer) { uri -> readCompressedAsset("models/$renderModelName/$uri") }
         updateRootTransform()
     }
 
@@ -367,7 +367,8 @@ class FilamentController(
     }
 
     private fun onChange3DModel(modelName: String, result: MethodChannel.Result) {
-        println("New model - $modelName")
+        modelViewer.destroyModel()
+        createDefaultRenderables(modelName)
     }
 
     private fun readCompressedAsset(assetName: String): ByteBuffer {
@@ -456,7 +457,7 @@ class FilamentController(
     inner class DoubleTapListener : GestureDetector.SimpleOnGestureListener() {
         override fun onDoubleTap(e: MotionEvent?): Boolean {
             modelViewer.destroyModel()
-            createDefaultRenderables()
+            createDefaultRenderables("BusterDrone")
             return super.onDoubleTap(e)
         }
     }
