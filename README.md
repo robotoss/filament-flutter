@@ -6,7 +6,7 @@ This project demonstrates the capabilities of filament with the use in flutter.
 
 ## Features
 
-- Render 3D model with HDR
+- Render 3D model with IBL
 
 Many thanks to the filament team for this. You can always check out filament in the
 original [repository]('https://github.com/google/filament')
@@ -34,14 +34,19 @@ dependencies {
 
 If you have changed the filament version, it is advisable to rebuild the project files:
 
-1) Download the filmaent version as indicated in the android dependencies, for your operating
+1) Download the filamaent version as indicated in the android dependencies, for your operating
    system https://github.com/google/filament/releases
 2) Go to the terminal and open
    the `filament_flutter_android/example/android/app/src/main/assets/envs` folder
 3) Run generator:
 
 ```sh
-dowloaded_filament_folder/bin/cmgen -x default_env --format=ktx --size=256 --extract-blur=0.1 --extract-blur=0.1 lightroom_14b.hdr
+dowloaded_filament_folder/bin/cmgen
+    -x default_env
+    --format=ktx
+    --size=256
+    --extract-blur=0.1
+    lightroom_14b.hdr
 ```
 
 Project files:
