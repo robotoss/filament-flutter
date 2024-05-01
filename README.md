@@ -1,55 +1,63 @@
 # Flutter Filament
 
-## _Flutter with real-time physically based rendering engine_
+## _Enhanced 3D Graphics with Flutter & Filament_
 
-This project demonstrates the capabilities of filament with the use in flutter.
+Flutter Filament demonstrates the integration of the Filament rendering engine with Flutter to enable real-time, physically-based 3D rendering. This project is an excellent resource for developers looking to leverage advanced graphics in their Flutter applications.
 
 ## Features
 
-- Render 3D model with IBL
+- **Real-time 3D Rendering:** Utilize Filament for stunning visual effects.
+- **Image-Based Lighting (IBL):** Render 3D models with realistic lighting and shadows.
 
-Many thanks to the filament team for this. You can always check out filament in the
-original [repository]('https://github.com/google/filament')
+Special thanks to the Filament team. For more details, visit the [Filament Repository](https://github.com/google/filament).
+
+## Preview
 
 <p float="left">
-<img src="https://github.com/robotoss/filament-flutter/blob/main/images/drone_screen.png?raw=true" width="250">
-<img src="https://github.com/robotoss/filament-flutter/blob/main/images/helmet_screen.png?raw=true" width="250">
+  <img src="https://github.com/robotoss/filament-flutter/blob/main/images/drone_screen.png?raw=true" width="250">
+  <img src="https://github.com/robotoss/filament-flutter/blob/main/images/helmet_screen.png?raw=true" width="250">
 </p>
 
-## Run
+## Getting Started
 
-### 🤖 Android
+### Requirements
 
-To run the project on Android at this point, you need to run the flutter project
-in `filament_flutter_android/example`. Current use of filament version `1.25.0`, To change the
-filament version, change the /android/build.gradle dependencies:
+- **Kotlin Version:** 1.9.0 or higher
+- **Minimum SDK Version:** 21
+- **Gradle Version:** 7.6.3 or higher
 
-```sh
-dependencies {
-    implementation 'com.google.android.filament:filament-android:1.25.0'
-    implementation 'com.google.android.filament:gltfio-android:1.25.0'
-    implementation 'com.google.android.filament:filament-utils-android:1.25.0'
-}
-```
+### Installation
 
-If you have changed the filament version, it is advisable to rebuild the project files:
+#### 🤖 Android
 
-1) Download the filamaent version as indicated in the android dependencies, for your operating
-   system https://github.com/google/filament/releases
-2) Go to the terminal and open
-   the `filament_flutter_android/example/android/app/src/main/assets/envs` folder
-3) Run generator:
+1. **Clone and Navigate:** Clone the repository and navigate to `filament_flutter_android/example`.
 
-```sh
-dowloaded_filament_folder/bin/cmgen
-    -x default_env
-    --format=ktx
-    --size=256
-    --extract-blur=0.1
-    lightroom_14b.hdr
-```
+2. **Update Dependencies:** To change the Filament version, update `build.gradle` in the `/android` directory:
+    ```gradle
+    dependencies {
+        implementation 'com.google.android.filament:filament-android:1.51.2'
+        implementation 'com.google.android.filament:gltfio-android:1.51.2'
+        implementation 'com.google.android.filament:filament-utils-android:1.51.2'
+    }
+    ```
 
-Project files:
+3. **Rebuild the Project:**
+   - Download the appropriate Filament version from [Google Filament Releases](https://github.com/google/filament/releases) for your OS.
+   - Navigate to `filament_flutter_android/example/android/app/src/main/assets/envs`.
+   - Generate environment assets using the downloaded Filament binaries:
+     ```sh
+     path_to_downloaded_filament/bin/cmgen -x default_env --format=ktx --size=256 --extract-blur=0.1 lightroom_14b.hdr
+     ```
 
-- `3D models` - filament_flutter_android/example/android/app/src/main/assets/models
-- `Sky box` - filament_flutter_android/example/android/app/src/main/assets/envs
+### Project Structure
+
+- **3D Models:** Located at `filament_flutter_android/example/android/app/src/main/assets/models`.
+- **Skybox Environments:** Stored in `filament_flutter_android/example/android/app/src/main/assets/envs`.
+
+## Support
+
+For support, please open an issue in the [GitHub repository](https://github.com/robotoss/filament-flutter/issues).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
