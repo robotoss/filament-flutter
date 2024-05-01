@@ -2,7 +2,7 @@ group 'com.robotoss.filament_flutter_android'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
         mavenCentral()
@@ -50,9 +50,9 @@ android {
     }
 
     dependencies {
-        implementation 'com.google.android.filament:filament-android:1.25.0'
-        implementation 'com.google.android.filament:gltfio-android:1.25.0'
-        implementation 'com.google.android.filament:filament-utils-android:1.25.0'
+        implementation 'com.google.android.filament:filament-android:1.51.2'
+        implementation 'com.google.android.filament:gltfio-android:1.51.2'
+        implementation 'com.google.android.filament:filament-utils-android:1.51.2'
 
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
