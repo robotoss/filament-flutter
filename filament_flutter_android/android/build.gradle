@@ -2,19 +2,19 @@ group 'com.robotoss.filament_flutter_android'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
-rootProject.allprojects {
+allprojects {
     repositories {
         google()
         mavenCentral()
@@ -25,7 +25,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.robotoss.filament_flutter_android'
+    }
+
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -38,16 +42,31 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 
     defaultConfig {
         minSdkVersion 21
     }
-}
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.android.filament:filament-android:1.25.0'
-    implementation 'com.google.android.filament:gltfio-android:1.25.0'
-    implementation 'com.google.android.filament:filament-utils-android:1.25.0'
+    dependencies {
+        implementation 'com.google.android.filament:filament-android:1.51.2'
+        implementation 'com.google.android.filament:gltfio-android:1.51.2'
+        implementation 'com.google.android.filament:filament-utils-android:1.51.2'
+
+        testImplementation 'org.jetbrains.kotlin:kotlin-test'
+        testImplementation 'org.mockito:mockito-core:5.0.0'
+    }
+
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen {false}
+                showStandardStreams = true
+            }
+        }
+    }
 }

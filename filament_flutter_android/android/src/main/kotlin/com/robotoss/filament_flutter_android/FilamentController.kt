@@ -62,7 +62,7 @@ class FilamentController(
     private lateinit var titlebarHint: TextView
 
     //
-    private val doubleTapListener = DoubleTapListener()
+//    private val doubleTapListener = DoubleTapListener()
 
     //
     private lateinit var doubleTapDetector: GestureDetector
@@ -93,7 +93,7 @@ class FilamentController(
 
         choreographer = Choreographer.getInstance()
 
-        doubleTapDetector = GestureDetector(context, doubleTapListener)
+//        doubleTapDetector = GestureDetector(context, doubleTapListener)
 
         modelViewer = ModelViewer(textureView)
         viewerContent.view = modelViewer.view
@@ -331,7 +331,7 @@ class FilamentController(
     fun loadSettings(message: RemoteServer.ReceivedMessage) {
         val json = StandardCharsets.UTF_8.decode(message.buffer).toString()
         viewerContent.assetLights = modelViewer.asset?.lightEntities
-        automation.applySettings(json, viewerContent)
+        automation.applySettings(modelViewer.engine, json, viewerContent)
         modelViewer.view.colorGrading = automation.getColorGrading(modelViewer.engine)
         modelViewer.cameraFocalLength = automation.viewerOptions.cameraFocalLength
         updateRootTransform()
@@ -454,11 +454,11 @@ class FilamentController(
 
 
     // Just for testing purposes, this releases the current model and reloads the default model.
-    inner class DoubleTapListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
-            modelViewer.destroyModel()
-            createDefaultRenderables("BusterDrone")
-            return super.onDoubleTap(e)
-        }
-    }
+//    inner class DoubleTapListener : GestureDetector.SimpleOnGestureListener() {
+//        override fun onDoubleTap(e: MotionEvent?): Boolean {
+//            modelViewer.destroyModel()
+//            createDefaultRenderables("BusterDrone")
+//            return super.onDoubleTap(e)
+//        }
+//    }
 }
