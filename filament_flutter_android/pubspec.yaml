@@ -2,22 +2,23 @@ name: filament_flutter_android
 description: Flutter widgets for Filament, at Android.
 repository: https://github.com/robotoss/filament-flutter/tree/main/filament_flutter_android
 issue_tracker: https://github.com/robotoss/filament-flutter/issues?q=is%3Aopen
-version: 0.0.1
-homepage:
+version: 0.0.2
+homepage: https://github.com/robotoss
 
 environment:
-  sdk: ">=2.16.2 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: '>=3.3.2 <4.0.0'
+  flutter: '>=3.3.0'
+
 
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.1.2
+  plugin_platform_interface: 2.1.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lint: ^1.8.1
+  flutter_lints: 3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
