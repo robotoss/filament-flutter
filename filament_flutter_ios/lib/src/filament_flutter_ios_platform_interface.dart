@@ -8,7 +8,8 @@ abstract class FilamentFlutterIosPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static FilamentFlutterIosPlatform _instance = MethodChannelFilamentFlutterIos();
+  static FilamentFlutterIosPlatform _instance =
+      MethodChannelFilamentFlutterIos();
 
   /// The default instance of [FilamentFlutterIosPlatform] to use.
   ///
@@ -23,7 +24,8 @@ abstract class FilamentFlutterIosPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  /// Change 3D model
+  Future<void> changeModel({required String modelName}) async {
+    throw UnimplementedError('changeModel() has not been implemented.');
   }
 }

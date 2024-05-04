@@ -1,3 +1,4 @@
+import 'package:filament_flutter_ios/src/filament_flutter_ios.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,6 @@ class _FilamentViewState extends State<FilamentView> {
   // This is used in the platform side to register the view.
   static const String viewType = 'flutter_filament_plugin.view';
 
-  late MethodChannel _channel;
-
   // Pass parameters to the platform side.
   static const Map<String, dynamic> creationParams = <String, dynamic>{
     'helmetModel': 'FlightHelmet',
@@ -31,10 +30,8 @@ class _FilamentViewState extends State<FilamentView> {
   };
 
   void _onPlatformViewCreated(int id) {
-    _channel = MethodChannel('${viewType}_$id');
-
     // Start scan after creation of the view
-    final controller = FilamentViewController._(_channel);
+    final controller = FilamentViewController();
 
     // Initialize the controller for controlling the QRView
     widget.onFilamentViewViewCreated(controller);
@@ -67,25 +64,5 @@ class _FilamentViewState extends State<FilamentView> {
           ..create();
       },
     );
-  }
-}
-
-class FilamentViewController {
-  FilamentViewController._(MethodChannel channel) : _channel = channel;
-
-  final MethodChannel _channel;
-
-  /// Change 3D model
-  Future<void> changeModel({required String modelName}) async {
-    try {
-      return await _channel.invokeMethod(
-        'change3DModel',
-        {
-          'modelName': modelName,
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
   }
 }

@@ -10,8 +10,12 @@ class MethodChannelFilamentFlutterIos extends FilamentFlutterIosPlatform {
   final methodChannel = const MethodChannel('filament_flutter_ios');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
+  Future<void> changeModel({required String modelName}) async {
+    await methodChannel.invokeMethod<String>(
+      'change3DModel',
+      {
+        'modelName': modelName,
+      },
+    );
   }
 }

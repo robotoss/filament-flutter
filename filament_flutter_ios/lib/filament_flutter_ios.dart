@@ -1,8 +1,4 @@
+library filament_flutter_ios;
 
-import 'filament_flutter_ios_platform_interface.dart';
-
-class FilamentFlutterIos {
-  Future<String?> getPlatformVersion() {
-    return FilamentFlutterIosPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/filament_flutter_ios.dart';
+export 'src/ui/filament_view.dart';
