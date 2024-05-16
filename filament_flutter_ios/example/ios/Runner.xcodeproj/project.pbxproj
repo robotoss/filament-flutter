@@ -172,7 +172,6 @@
 				70D921A5BBF8FC887046B5F7 /* Pods-RunnerTests.release.xcconfig */,
 				04E62BC439FB6B446492B2C0 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -411,7 +410,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -462,13 +461,49 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = H5HB94J23V;
 				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lstdc++",
+					"-l\"backend\"",
+					"-l\"basis_transcoder\"",
+					"-l\"camutils\"",
+					"-l\"civetweb\"",
+					"-l\"dracodec\"",
+					"-l\"filabridge\"",
+					"-l\"filaflat\"",
+					"-l\"filamat\"",
+					"-l\"filament\"",
+					"-l\"filament_flutter_ios\"",
+					"-l\"filameshio\"",
+					"-l\"geometry\"",
+					"-l\"gltfio_core\"",
+					"-l\"ibl\"",
+					"-l\"image\"",
+					"-l\"integration_test\"",
+					"-l\"ktxreader\"",
+					"-l\"meshoptimizer\"",
+					"-l\"shaders\"",
+					"-l\"smol-v\"",
+					"-l\"stb\"",
+					"-l\"uberarchive\"",
+					"-l\"uberzlib\"",
+					"-l\"utils\"",
+					"-l\"viewer\"",
+					"-l\"zstd\"",
+					"-framework",
+					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.robotoss.filamentFlutterIosExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -524,7 +559,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -581,7 +616,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -632,13 +667,49 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = H5HB94J23V;
 				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lstdc++",
+					"-l\"backend\"",
+					"-l\"basis_transcoder\"",
+					"-l\"camutils\"",
+					"-l\"civetweb\"",
+					"-l\"dracodec\"",
+					"-l\"filabridge\"",
+					"-l\"filaflat\"",
+					"-l\"filamat\"",
+					"-l\"filament\"",
+					"-l\"filament_flutter_ios\"",
+					"-l\"filameshio\"",
+					"-l\"geometry\"",
+					"-l\"gltfio_core\"",
+					"-l\"ibl\"",
+					"-l\"image\"",
+					"-l\"integration_test\"",
+					"-l\"ktxreader\"",
+					"-l\"meshoptimizer\"",
+					"-l\"shaders\"",
+					"-l\"smol-v\"",
+					"-l\"stb\"",
+					"-l\"uberarchive\"",
+					"-l\"uberzlib\"",
+					"-l\"utils\"",
+					"-l\"viewer\"",
+					"-l\"zstd\"",
+					"-framework",
+					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.robotoss.filamentFlutterIosExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -651,13 +722,49 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = H5HB94J23V;
 				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lstdc++",
+					"-l\"backend\"",
+					"-l\"basis_transcoder\"",
+					"-l\"camutils\"",
+					"-l\"civetweb\"",
+					"-l\"dracodec\"",
+					"-l\"filabridge\"",
+					"-l\"filaflat\"",
+					"-l\"filamat\"",
+					"-l\"filament\"",
+					"-l\"filament_flutter_ios\"",
+					"-l\"filameshio\"",
+					"-l\"geometry\"",
+					"-l\"gltfio_core\"",
+					"-l\"ibl\"",
+					"-l\"image\"",
+					"-l\"integration_test\"",
+					"-l\"ktxreader\"",
+					"-l\"meshoptimizer\"",
+					"-l\"shaders\"",
+					"-l\"smol-v\"",
+					"-l\"stb\"",
+					"-l\"uberarchive\"",
+					"-l\"uberzlib\"",
+					"-l\"utils\"",
+					"-l\"viewer\"",
+					"-l\"zstd\"",
+					"-framework",
+					"\"UIKit\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.robotoss.filamentFlutterIosExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";

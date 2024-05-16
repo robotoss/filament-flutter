@@ -7,6 +7,10 @@
 
 #import "FilamentView.h"
 
+#include <filament/Engine.h>
+
+using namespace filament;
+
 @implementation FilamentViewFactory {
     NSObject<FlutterBinaryMessenger>* _messenger;
 }
@@ -37,6 +41,7 @@
 
 @implementation FilamentView {
     UIView *_view;
+    Engine* _engine;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -45,6 +50,7 @@
               binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
     if (self = [super init]) {
         _view = [[UIView alloc] init];
+        _engine = Engine::create(Engine::Backend::METAL);
     }
     return self;
 }

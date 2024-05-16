@@ -1,6 +1,6 @@
 # Flutter Filament
 
-## _Enhanced 3D Graphics with Flutter & Filament_
+## Enhanced 3D Graphics with Flutter & Filament
 
 Flutter Filament demonstrates the integration of the Filament rendering engine with Flutter to enable real-time, physically-based 3D rendering. This project is an excellent resource for developers looking to leverage advanced graphics in their Flutter applications.
 
@@ -32,7 +32,7 @@ Special thanks to the Filament team. For more details, visit the [Filament Repos
 
 1. **Clone and Navigate:** Clone the repository and navigate to `filament_flutter_android/example`.
 
-2. **Update Dependencies:** To change the Filament version, update `build.gradle` in the `/android` directory:
+2. **Update Dependencies:** Update `build.gradle` in the `/android` directory to change the Filament version:
     ```gradle
     dependencies {
         implementation 'com.google.android.filament:filament-android:1.51.2'
@@ -54,6 +54,16 @@ Special thanks to the Filament team. For more details, visit the [Filament Repos
 - **3D Models:** Located at `filament_flutter_android/example/android/app/src/main/assets/models`.
 - **Skybox Environments:** Stored in `filament_flutter_android/example/android/app/src/main/assets/envs`.
 
+#### 🍏 iOS
+
+Ensure you have added the following parameters to the Build Settings of the project:
+
+- Linking General => Other Linker Flag => `-lstdc++`
+- Apple Clang - Language - C++ => C Language Dialect => `GNU++17 [std=gnu++17]`
+
+The project already includes pre-built Filament libraries. You can also build new ones when new Filament versions are released.
+
+
 ## Support
 
 For support, please open an issue in the [GitHub repository](https://github.com/robotoss/filament-flutter/issues).
@@ -61,3 +71,5 @@ For support, please open an issue in the [GitHub repository](https://github.com/
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
